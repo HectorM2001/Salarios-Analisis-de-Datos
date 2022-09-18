@@ -1,0 +1,585 @@
+---
+title: "Salarios Ciencia de Datos"
+author: "Héctor Francisco Marin Garrido"
+date: "2022-09-17"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+M=read.csv("D:\\AI_ITESM\\ds_salaries.csv")
+M1=M
+```
+
+```{r}
+pie(table(M$experience_level), names(table(M$experience_level)),main="Niveles de Experiencia")
+barplot(table(M$experience_level),main="Niveles de Experiencia",xlab="Niveles de Experiencia",ylab="Frecuencia")
+```
+```{r}
+pie(table(M$work_year), names(table(M$work_year)),main="Año de Trabajo")
+barplot(table(M$work_year),main="Año de Trabajo",xlab="Año de Trabajo",ylab="Frecuencia")
+```
+```{r}
+pie(table(M$employment_type), names(table(M$employment_type)),main="Tipo de Empleo")
+barplot(table(M$employment_type),main="Tipo de Empleo",xlab="Tipo de Empleo",ylab="Frecuencia")
+```
+```{r}
+pie(table(M$job_title), names(table(M$job_title)),main="Titulo de trabajo")
+```
+```{r}
+pie(table(M$salary_currency), names(table(M$salary_currency)),main="Moneda de salario")
+```
+```{r}
+pie(table(M$employee_residence), names(table(M$employee_residence)),main="Residencia de empleado")
+```
+```{r}
+pie(table(M$company_location), names(table(M$company_location)),main="Locacion de empresa")
+```
+```{r}
+barplot(table(M$company_size),main="Tamaño de empresa",xlab="Tamaño de empresa",ylab="Frecuencia")
+```
+```{r}
+pie(table(M$remote_ratio), names(table(M$remote_ratio)),main="Cantidad de trabajo remoto")
+barplot(table(M$remote_ratio),main="Cantidad de trabajo remoto",xlab="Cantidad de trabajo remoto",ylab="Frecuencia")
+```
+```{r}
+q1=quantile(M$salary_in_usd,0.25)  #Cuantil 1 de la variable X
+q2=quantile(M$salary_in_usd,0.5)
+q3=quantile(M$salary_in_usd,0.75)
+y1=min(M$salary_in_usd)
+y2=max(M$salary_in_usd)
+ri=IQR(M$salary_in_usd)
+boxplot(M$salary_in_usd,horizontal=TRUE,ylim=c(y1,y2))
+abline(v=q3+1.5*ri,col="red")
+qqnorm(M$salary_in_usd)
+qqline(M$salary_in_usd)
+hist(M$salary_in_usd,prob=TRUE,col=0)
+x=seq(min(M$salary_in_usd),max(M$salary_in_usd),0.1)
+y=dnorm(x,mean(M$salary_in_usd),sd(M$salary_in_usd))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(M$salary_in_usd)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(M$salary_in_usd)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(M$salary_in_usd)
+media=mean(M$salary_in_usd)
+DE=sd(M$salary_in_usd)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Gráfico de IC",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+Salario_USD= M[M$salary_in_usd<q3+1.5*ri,c("salary_in_usd")]
+boxplot(Salario_USD,horizontal=TRUE,ylim=c(y1,y2))
+qqnorm(Salario_USD)
+qqline(Salario_USD)
+hist(Salario_USD,prob=TRUE,col=0)
+x=seq(min(Salario_USD),max(Salario_USD),0.1)
+y=dnorm(x,mean(Salario_USD),sd(Salario_USD))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(Salario_USD)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(Salario_USD)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(Salario_USD)
+media=mean(Salario_USD)
+DE=sd(Salario_USD)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Gráfico de IC",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+```{r}
+library(ggplot2)
+ggplot(M1,aes(x=factor(work_year),y=salary_in_usd,fill=experience_level))+geom_bar(stat="identity",position = "dodge")
+
+```
+```{r}
+library(ggplot2)
+ggplot(M1,aes(x=factor(work_year),y=salary_in_usd,fill=employment_type))+geom_bar(stat="identity",position = "dodge")
+
+```
+```{r}
+library(ggplot2)
+ggplot(M1,aes(x=factor(work_year),y=salary_in_usd,fill=company_size))+geom_bar(stat="identity",position = "dodge")
+
+```
+```{r}
+library(ggplot2)
+ggplot(M1,aes(x=factor(remote_ratio),y=salary_in_usd,fill=work_year))+geom_bar(stat="identity",position = "dodge")
+
+```
+```{r}
+M1=M[M$work_year==2020,]
+M2=M[M$work_year==2021,]
+M3=M[M$work_year==2022,]
+M4=M3[M3$experience_level=="EN",]
+M5=M3[M3$experience_level=="MI",]
+M6=M3[M3$experience_level=="EX",]
+M7=M3[M3$experience_level=="SE",]
+```
+
+```{r}
+q1=quantile(M1$salary_in_usd,0.25)  #Cuantil 1 de la variable X
+q2=quantile(M1$salary_in_usd,0.5)
+q3=quantile(M1$salary_in_usd,0.75)
+y1=min(M1$salary_in_usd)
+y2=max(M1$salary_in_usd)
+ri=IQR(M1$salary_in_usd)
+boxplot(M1$salary_in_usd,horizontal=TRUE,ylim=c(y1,y2))
+abline(v=q3+1.5*ri,col="red")
+qqnorm(M1$salary_in_usd)
+qqline(M1$salary_in_usd)
+hist(M1$salary_in_usd,prob=TRUE,col=0,main = "Salario 2020 con outliers")
+x=seq(min(M1$salary_in_usd),max(M1$salary_in_usd),0.1)
+y=dnorm(x,mean(M1$salary_in_usd),sd(M1$salary_in_usd))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(M1$salary_in_usd)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(M1$salary_in_usd)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(M1$salary_in_usd)
+media=mean(M1$salary_in_usd)
+DE=sd(M1$salary_in_usd)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2020 con outliers",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+Salario_USD= M1[M1$salary_in_usd<q3+1.5*ri,c("salary_in_usd")]
+boxplot(Salario_USD,horizontal=TRUE,ylim=c(y1,y2))
+qqnorm(Salario_USD)
+qqline(Salario_USD)
+hist(Salario_USD,prob=TRUE,col=0,main="Salario 2020 sin outliers")
+x=seq(min(Salario_USD),max(Salario_USD),0.1)
+y=dnorm(x,mean(Salario_USD),sd(Salario_USD))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(Salario_USD)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(Salario_USD)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(Salario_USD)
+media=mean(Salario_USD)
+DE=sd(Salario_USD)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2020 sin outliers",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+
+```{r}
+q1=quantile(M2$salary_in_usd,0.25)  #Cuantil 1 de la variable X
+q2=quantile(M2$salary_in_usd,0.5)
+q3=quantile(M2$salary_in_usd,0.75)
+y1=min(M2$salary_in_usd)
+y2=max(M2$salary_in_usd)
+ri=IQR(M2$salary_in_usd)
+boxplot(M2$salary_in_usd,horizontal=TRUE,ylim=c(y1,y2))
+abline(v=q3+1.5*ri,col="red")
+qqnorm(M2$salary_in_usd)
+qqline(M2$salary_in_usd)
+hist(M2$salary_in_usd,prob=TRUE,col=0,main="Salario 2021 con outliers")
+x=seq(min(M2$salary_in_usd),max(M2$salary_in_usd),0.1)
+y=dnorm(x,mean(M2$salary_in_usd),sd(M2$salary_in_usd))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(M2$salary_in_usd)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(M2$salary_in_usd)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(M2$salary_in_usd)
+media=mean(M2$salary_in_usd)
+DE=sd(M2$salary_in_usd)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2021 con outliers",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+Salario_USD= M2[M2$salary_in_usd<q3+1.5*ri,c("salary_in_usd")]
+boxplot(Salario_USD,horizontal=TRUE,ylim=c(y1,y2))
+qqnorm(Salario_USD)
+qqline(Salario_USD)
+hist(Salario_USD,prob=TRUE,col=0,main="Salario 2021 sin outliers")
+x=seq(min(Salario_USD),max(Salario_USD),0.1)
+y=dnorm(x,mean(Salario_USD),sd(Salario_USD))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(Salario_USD)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(Salario_USD)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(Salario_USD)
+media=mean(Salario_USD)
+DE=sd(Salario_USD)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2021 sin outliers",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+
+```{r}
+q1=quantile(M3$salary_in_usd,0.25)  #Cuantil 1 de la variable X
+q2=quantile(M3$salary_in_usd,0.5)
+q3=quantile(M3$salary_in_usd,0.75)
+y1=min(M3$salary_in_usd)
+y2=max(M3$salary_in_usd)
+ri=IQR(M3$salary_in_usd)
+boxplot(M3$salary_in_usd,horizontal=TRUE,ylim=c(y1,y2))
+abline(v=q3+1.5*ri,col="red")
+qqnorm(M3$salary_in_usd)
+qqline(M3$salary_in_usd)
+hist(M3$salary_in_usd,prob=TRUE,col=0,main="Salario 2022 con outliers")
+x=seq(min(M3$salary_in_usd),max(M3$salary_in_usd),0.1)
+y=dnorm(x,mean(M3$salary_in_usd),sd(M3$salary_in_usd))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(M3$salary_in_usd)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(M3$salary_in_usd)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(M3$salary_in_usd)
+media=mean(M3$salary_in_usd)
+DE=sd(M3$salary_in_usd)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 con outliers",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+Salario_USD= M3[M3$salary_in_usd<q3+1.5*ri,c("salary_in_usd")]
+boxplot(Salario_USD,horizontal=TRUE,ylim=c(y1,y2))
+qqnorm(Salario_USD)
+qqline(Salario_USD)
+hist(Salario_USD,prob=TRUE,col=0,main="Salario 2022 sin outliers")
+x=seq(min(Salario_USD),max(Salario_USD),0.1)
+y=dnorm(x,mean(Salario_USD),sd(Salario_USD))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(Salario_USD)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(Salario_USD)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(Salario_USD)
+media=mean(Salario_USD)
+DE=sd(Salario_USD)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 sin outliers",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+```{r}
+q1=quantile(M4$salary_in_usd,0.25)  #Cuantil 1 de la variable X
+q2=quantile(M4$salary_in_usd,0.5)
+q3=quantile(M4$salary_in_usd,0.75)
+y1=min(M4$salary_in_usd)
+y2=max(M4$salary_in_usd)
+ri=IQR(M4$salary_in_usd)
+boxplot(M4$salary_in_usd,horizontal=TRUE,ylim=c(y1,y2))
+abline(v=q3+1.5*ri,col="red")
+qqnorm(M4$salary_in_usd)
+qqline(M4$salary_in_usd)
+hist(M4$salary_in_usd,prob=TRUE,col=0,main="Salario 2022 EN con outliers")
+x=seq(min(M4$salary_in_usd),max(M4$salary_in_usd),0.1)
+y=dnorm(x,mean(M4$salary_in_usd),sd(M4$salary_in_usd))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(M4$salary_in_usd)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(M4$salary_in_usd)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(M4$salary_in_usd)
+media=mean(M4$salary_in_usd)
+DE=sd(M4$salary_in_usd)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 EN con outliers",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+Salario_USD= M4[M4$salary_in_usd<q3+1.5*ri,c("salary_in_usd")]
+boxplot(Salario_USD,horizontal=TRUE,ylim=c(y1,y2))
+qqnorm(Salario_USD)
+qqline(Salario_USD)
+hist(Salario_USD,prob=TRUE,col=0,main="Salario 2022 EN sin outliers")
+x=seq(min(Salario_USD),max(Salario_USD),0.1)
+y=dnorm(x,mean(Salario_USD),sd(Salario_USD))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(Salario_USD)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(Salario_USD)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(Salario_USD)
+media=mean(Salario_USD)
+DE=sd(Salario_USD)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 EN sin outliers",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+q1=quantile(M5$salary_in_usd,0.25)  #Cuantil 1 de la variable X
+q2=quantile(M5$salary_in_usd,0.5)
+q3=quantile(M5$salary_in_usd,0.75)
+y1=min(M5$salary_in_usd)
+y2=max(M5$salary_in_usd)
+ri=IQR(M5$salary_in_usd)
+boxplot(M5$salary_in_usd,horizontal=TRUE,ylim=c(y1,y2))
+abline(v=q3+1.5*ri,col="red")
+qqnorm(M5$salary_in_usd)
+qqline(M5$salary_in_usd)
+hist(M5$salary_in_usd,prob=TRUE,col=0,main="Salario 2022 MI con outliers")
+x=seq(min(M5$salary_in_usd),max(M5$salary_in_usd),0.1)
+y=dnorm(x,mean(M5$salary_in_usd),sd(M5$salary_in_usd))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(M5$salary_in_usd)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(M5$salary_in_usd)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(M5$salary_in_usd)
+media=mean(M5$salary_in_usd)
+DE=sd(M5$salary_in_usd)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 MI con outliers",,xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+Salario_USD= M5[M5$salary_in_usd<q3+1.5*ri,c("salary_in_usd")]
+boxplot(Salario_USD,horizontal=TRUE,ylim=c(y1,y2))
+qqnorm(Salario_USD)
+qqline(Salario_USD)
+hist(Salario_USD,prob=TRUE,col=0,main="Salario 2022 MI sin outliers")
+x=seq(min(Salario_USD),max(Salario_USD),0.1)
+y=dnorm(x,mean(Salario_USD),sd(Salario_USD))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(Salario_USD)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(Salario_USD)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(Salario_USD)
+media=mean(Salario_USD)
+DE=sd(Salario_USD)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 MI sin outliers",xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+q1=quantile(M6$salary_in_usd,0.25)  #Cuantil 1 de la variable X
+q2=quantile(M6$salary_in_usd,0.5)
+q3=quantile(M6$salary_in_usd,0.75)
+y1=min(M6$salary_in_usd)
+y2=max(M6$salary_in_usd)
+ri=IQR(M6$salary_in_usd)
+boxplot(M6$salary_in_usd,horizontal=TRUE,ylim=c(y1,y2))
+abline(v=q3+1.5*ri,col="red")
+qqnorm(M6$salary_in_usd)
+qqline(M6$salary_in_usd)
+hist(M6$salary_in_usd,prob=TRUE,col=0,main="Salario 2022 EX con outliers")
+x=seq(min(M6$salary_in_usd),max(M6$salary_in_usd),0.1)
+y=dnorm(x,mean(M6$salary_in_usd),sd(M6$salary_in_usd))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(M6$salary_in_usd)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(M6$salary_in_usd)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(M6$salary_in_usd)
+media=mean(M6$salary_in_usd)
+DE=sd(M6$salary_in_usd)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 EX con outliers",xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+Salario_USD= M6[M6$salary_in_usd<q3+1.5*ri,c("salary_in_usd")]
+boxplot(Salario_USD,horizontal=TRUE,ylim=c(y1,y2))
+qqnorm(Salario_USD)
+qqline(Salario_USD)
+hist(Salario_USD,prob=TRUE,col=0,main="Salario 2022 EX sin outliers")
+x=seq(min(Salario_USD),max(Salario_USD),0.1)
+y=dnorm(x,mean(Salario_USD),sd(Salario_USD))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(Salario_USD)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(Salario_USD)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(Salario_USD)
+media=mean(Salario_USD)
+DE=sd(Salario_USD)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 EX sin outliers",xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+```{r}
+q1=quantile(M7$salary_in_usd,0.25)  #Cuantil 1 de la variable X
+q2=quantile(M7$salary_in_usd,0.5)
+q3=quantile(M7$salary_in_usd,0.75)
+y1=min(M7$salary_in_usd)
+y2=max(M7$salary_in_usd)
+ri=IQR(M7$salary_in_usd)
+boxplot(M7$salary_in_usd,horizontal=TRUE,ylim=c(y1,y2))
+abline(v=q3+1.5*ri,col="red")
+qqnorm(M7$salary_in_usd)
+qqline(M7$salary_in_usd)
+hist(M7$salary_in_usd,prob=TRUE,col=0,main="Salario 2022 SE con outliers")
+x=seq(min(M7$salary_in_usd),max(M7$salary_in_usd),0.1)
+y=dnorm(x,mean(M7$salary_in_usd),sd(M7$salary_in_usd))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(M7$salary_in_usd)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(M7$salary_in_usd)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(M7$salary_in_usd)
+media=mean(M7$salary_in_usd)
+DE=sd(M7$salary_in_usd)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 SE con outliers",xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
+
+```{r}
+Salario_USD= M7[M7$salary_in_usd<q3+1.5*ri,c("salary_in_usd")]
+boxplot(Salario_USD,horizontal=TRUE,ylim=c(y1,y2))
+qqnorm(Salario_USD)
+qqline(Salario_USD)
+hist(Salario_USD,prob=TRUE,col=0,main="Salario 2022 SE sin outliers")
+x=seq(min(Salario_USD),max(Salario_USD),0.1)
+y=dnorm(x,mean(Salario_USD),sd(Salario_USD))
+lines(x,y,col="red")
+library(moments)
+skewness1=skewness(Salario_USD)
+cat("Sesgo: ",skewness1)
+cat("\n")
+kurtosis1=kurtosis(Salario_USD)
+cat("Curtosis: ",kurtosis1)
+cat("\n")
+library(plotrix)
+n=length(Salario_USD)
+media=mean(Salario_USD)
+DE=sd(Salario_USD)
+alfa=0.05
+ErrorEst=DE/sqrt(n)
+X_=rnorm(n,media,ErrorEst)
+E=abs(qnorm(alfa/2))*DE/sqrt(n)
+plotCI(1:n,X_,E,main="Salario 2022 SE sin outliers",xlab="n Intervalos",ylab="Medias Muestrales")
+abline(h=media,col="red")
+cat("El promedio es de: ",media," +- ",E)
+```
